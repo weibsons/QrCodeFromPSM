@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="br.com.sismeta.qrcodefrompsm.guid.MainUI">
+  <grid id="27dc6" binding="painelMain" layout-manager="GridLayoutManager" row-count="12" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="20" y="20" width="875" height="602"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="37cee" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Droid Sans"/>
+          <text value="Selecione o arquivo:"/>
+        </properties>
+      </component>
+      <component id="a95ca" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Droid Sans" size="20"/>
+          <text value="Conversor texto para QRCode"/>
+        </properties>
+      </component>
+      <component id="37784" class="javax.swing.JButton" binding="buttonEscolherArquivo">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Droid Sans"/>
+          <text value="Escolher arquivo..."/>
+        </properties>
+      </component>
+      <component id="ea761" class="javax.swing.JComboBox" binding="comboBoxNome">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="4d1" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="ea761"/>
+          <text value="Escolha a coluna que representa o nome do arquivo:"/>
+        </properties>
+      </component>
+      <component id="798c5" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="90517"/>
+          <text value="Escolha a coluna que representa o QRCode:"/>
+        </properties>
+      </component>
+      <component id="90517" class="javax.swing.JComboBox" binding="comboBoxQrCode">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c26fb" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="995e6" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="10 primeiros registros:"/>
+        </properties>
+      </component>
+      <component id="498a1" class="javax.swing.JLabel" binding="labelArquivoSelecionado">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <grid id="69607" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <scrollpane id="34796">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <horizontalScrollBarPolicy value="32"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="df672" class="javax.swing.JTable" binding="table">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+      <component id="7ba47" class="javax.swing.JButton" binding="buttonGerarQrCode">
+        <constraints>
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-13993278"/>
+          <foreground color="-16777216"/>
+          <text value="Gerar QrCodes"/>
+        </properties>
+      </component>
+      <component id="a6cfc" class="javax.swing.JProgressBar" binding="progressBar">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <string value="0%"/>
+          <stringPainted value="true"/>
+          <value value="0"/>
+        </properties>
+      </component>
+      <component id="b378d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Log do processamento:"/>
+        </properties>
+      </component>
+      <scrollpane id="f27ae">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="150"/>
+            <preferred-size width="-1" height="150"/>
+            <maximum-size width="-1" height="150"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="8b1a5" class="javax.swing.JTextArea" binding="textAreaLog">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+    </children>
+  </grid>
+</form>
