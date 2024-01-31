@@ -9,6 +9,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.*;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -45,7 +46,9 @@ public class QRCodeCreator {
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         hintMap.put(EncodeHintType.MARGIN, 0);
         var matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, getWidth(), getHeight(), hintMap);
-        MatrixToImageWriter.writeToPath(matrix, "png", file.toPath());
+        try (var fos = new FileOutputStream(file)) {
+            MatrixToImageWriter.writeToStream(matrix, "png", fos);
+        }
     }
 
 }

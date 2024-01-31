@@ -2,7 +2,8 @@ package br.com.sismeta.qrcodefrompsm.task;
 
 import br.com.sismeta.qrcodefrompsm.interfaces.ExecutionCallback;
 import br.com.sismeta.qrcodefrompsm.util.QRCodeCreator;
-import lombok.AllArgsConstructor;
+import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
@@ -10,19 +11,28 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
 
-    private File file;
-    private List<List<String>> items;
-    private JComboBox<String> comboBoxNome;
-    private JComboBox<String> comboBoxQrCode;
-    private JProgressBar progressBar;
-    private JTextArea textAreaLog;
+    private final File file;
+    private final List<List<String>> items;
+    private final JComboBox<String> comboBoxNome;
+    private final JComboBox<String> comboBoxQrCode;
+    private final JProgressBar progressBar;
+    private final JTextArea textAreaLog;
+    private final ExecutionCallback callback;
 
-    private ExecutionCallback callback;
+    private StringBuilder log;
+    private AtomicInteger current = new AtomicInteger(0);
+    private AtomicInteger total = new AtomicInteger(0);
+
 
     @Override
     protected Void doInBackground() {
@@ -59,32 +69,37 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
         var qrcodeIndex = comboBoxQrCode.getSelectedIndex();
 
         var creator = QRCodeCreator.builder()
-                .width(600)
-                .height(600)
+                .width(200)
+                .height(200)
                 .build();
         creator.makeSavePath(file.getParent());
 
-        var log = new StringBuilder();
+        log = new StringBuilder();
+        total.set(items.size());
+        current.set(1);
+        System.out.println("Tamanho total do job: " + total.get());
 
-        var size = items.size();
-        for (int i = 0; i < size; i++) {
-            var item = items.get(i);
+        var numeroDeThreads = Runtime.getRuntime().availableProcessors();
+        var executorService = Executors.newFixedThreadPool(numeroDeThreads);
+        var tasks = new ArrayList<Callable<Void>>();
 
-            var name = item.get(nomeIndex);
-            var text = item.get(qrcodeIndex);
-            try {
-                creator.create(name + ".png", text);
-
-                var progress = i * 100 / size;
-                publish(progress);
-                textAreaLog.append((i+1) + " : " + name + " criado com sucesso!\n");
-            } catch (Exception ex) {
-                log.append("Erro ao tentar gerar o QrCode da linha " + i + ". Nome atribuído: [" + name + "] Texto para o QRCode: [" + text + "]\n");
-                textAreaLog.append((i+1) + " : Erro ao tentar gerar o QrCode.");
-                ex.printStackTrace();
-            }
+        for (var item : items) {
+            tasks.add(() -> {
+                workItem(item, nomeIndex, qrcodeIndex, creator);
+                return null;
+            });
         }
-        publish(100);
+
+        try {
+            var futures = executorService.invokeAll(tasks);
+            for (var future : futures) {
+                future.get();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            executorService.shutdown();
+        }
 
         try {
             var logfile = new File(file.getParent() + "/qrcodes/logs/");
@@ -93,6 +108,48 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+
+        publish(100);
+    }
+
+    /**
+     * Função reponsável por pegar um item da lista e criar o QRCode
+     *
+     * @param item        List
+     * @param nomeIndex   Int
+     * @param qrcodeIndex Int
+     * @param creator     {@link QRCodeCreator}
+     */
+    private void workItem(List<String> item, int nomeIndex, int qrcodeIndex, QRCodeCreator creator) {
+        var now = current.incrementAndGet();
+        if (nomeIndex >= 0 && nomeIndex < item.size() && qrcodeIndex >= 0 && qrcodeIndex < item.size()) {
+            var name = item.get(nomeIndex);
+            var text = item.get(qrcodeIndex);
+            try {
+                creator.create(name + ".png", text);
+
+                var progress = now * 100 / total.get();
+                publish(progress);
+                textAreaLog.append((now) + " : " + name + " criado com sucesso!\n");
+                System.out.println(now + " de " + total.get());
+            } catch (Exception ex) {
+                log.append("Erro ao tentar gerar o QrCode da linha ").append(now).append(". Nome atribuído: [").append(name).append("] Texto para o QRCode: [").append(text).append("]\n");
+                textAreaLog.append((now) + " : Erro ao tentar gerar o QrCode.\n");
+                ex.printStackTrace();
+            }
+        } else {
+            var exMsg = "Linha " + now + " não foi executada, os parâmetros de nome e ou qrcode não encontrados.\n";
+            System.out.println(exMsg);
+            log.append(exMsg);
+            textAreaLog.append(exMsg);
+        }
+
+        textAreaLog.setCaretPosition(textAreaLog.getDocument().getLength());
+
+        if (now % 1000 == 0) {
+            System.gc();
+        }
+
     }
 
     @Override

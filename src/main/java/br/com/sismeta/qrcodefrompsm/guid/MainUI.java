@@ -85,6 +85,9 @@ public class MainUI {
             System.out.println("Erro ao ler o arquivo!");
         }
 
+        System.out.println("HEADER SIZE: " + header.size());
+        System.out.println("ITEMS SIZE: " + items.size());
+
         return items;
     }
 
