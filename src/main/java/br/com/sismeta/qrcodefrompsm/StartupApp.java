@@ -1,7 +1,6 @@
 package br.com.sismeta.qrcodefrompsm;
 
 import br.com.sismeta.qrcodefrompsm.guid.MainUI;
-import lombok.extern.log4j.Log4j2;
 
 import javax.swing.*;
 
