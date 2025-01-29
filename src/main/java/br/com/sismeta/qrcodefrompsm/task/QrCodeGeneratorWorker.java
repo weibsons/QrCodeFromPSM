@@ -29,7 +29,7 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
     private final JTextArea textAreaLog;
     private final ExecutionCallback callback;
 
-    private StringBuilder log;
+    private final StringBuilder log = new StringBuilder();
     private final AtomicInteger current = new AtomicInteger(0);
     private final AtomicInteger total = new AtomicInteger(0);
 
@@ -63,6 +63,10 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
         }
     }
 
+    /**
+     * Função responsável por gerar os qrcodes baseados em algum campo do Excel.<br/>
+     * As atividades são enfileiradas em jobs para serem processados em paralelo, a quantidade de jobs são baseadas na quantidade de processadores existentes na CPU.
+     */
     private void generateQrCode() {
         textAreaLog.setText("");
         var nomeIndex = comboBoxNome.getSelectedIndex();
@@ -74,7 +78,6 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
                 .build();
         creator.makeSavePath(file.getParent());
 
-        log = new StringBuilder();
         total.set(items.size());
         current.set(1);
         System.out.println("Tamanho total do job: " + total.get());

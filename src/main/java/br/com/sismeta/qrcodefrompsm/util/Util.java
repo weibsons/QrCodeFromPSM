@@ -30,6 +30,7 @@ public class Util {
 
     /**
      * Função responsável por decodificar o charset do arquivo.
+     *
      * @param file {@link File}
      * @return String
      */
@@ -57,10 +58,10 @@ public class Util {
      * Função responsável por retornar apenas uma quantidade de elementos que for passada como parametro de um lista.
      * Se essa quantidade for menor aos itens da lista retorna somente a quantidade de itens que a lista possui.
      * Se for maior ou igual retorna apenas o maxItens informados no parâmetro
-     * @param list List
-     * @param maxItens Int Número de itens que deseja retornar
+     *
+     * @param list     {@link List}
+     * @param maxItens {@link Integer} Número de itens que deseja retornar
      * @return List
-     * @param <T>
      */
     public static <T> List<T> extrairDezItens(List<T> list, int maxItens) {
         var size = list.size();

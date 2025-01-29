@@ -2,6 +2,7 @@ package br.com.sismeta.qrcodefrompsm.guid;
 
 import br.com.sismeta.qrcodefrompsm.task.QrCodeGeneratorWorker;
 import br.com.sismeta.qrcodefrompsm.util.Util;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -22,6 +23,7 @@ public class MainUI {
     private List<String> header;
     private List<List<String>> items;
 
+    @Getter
     private JPanel painelMain;
     private JButton buttonEscolherArquivo;
     private JTable table;
@@ -149,7 +151,7 @@ public class MainUI {
     /**
      * Função responsável por gerar os qrcodes
      *
-     * @param e
+     * @param e {@link ActionEvent}
      */
     private void generateQrCode(ActionEvent e) {
         if (this.file != null && items != null && !items.isEmpty()) {
@@ -176,10 +178,6 @@ public class MainUI {
     public MainUI() {
         buttonEscolherArquivo.addActionListener(this::selectFile);
         buttonGerarQrCode.addActionListener(this::generateQrCode);
-    }
-
-    public JPanel getPainelMain() {
-        return painelMain;
     }
 
 }

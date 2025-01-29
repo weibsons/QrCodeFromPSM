@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- *
  * @author links
  */
 @Getter
@@ -30,15 +29,29 @@ public class QRCodeCreator {
     @Builder.Default
     private int height = 600;
 
+    /**
+     * Função responsável por criar o diretório onde será salvo os QRCodes
+     *
+     * @param savePath {@link String}
+     */
     public void makeSavePath(String savePath) {
         var path = savePath + File.separator + "qrcodes" + File.separator;
         var filePath = new File(path);
         if (!filePath.exists()) {
-            filePath.mkdirs();
+            var created = filePath.mkdirs();
+            System.out.println("Directory created: " + created);
         }
         this.savePath = path;
     }
 
+    /**
+     * Função responsável por criar os QRCodes
+     *
+     * @param name {@link String} Nome do QRCode
+     * @param text {@link String} Conteúdo do QRCode
+     * @throws WriterException Erro ao escrever conteúdo do QRCode
+     * @throws IOException Caso não exista arquivo ou caminho
+     */
     public void create(String name, String text) throws WriterException, IOException {
         var file = new File(savePath, name);
 
