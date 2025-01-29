@@ -30,8 +30,8 @@ public class QrCodeGeneratorWorker extends SwingWorker<Void, Integer> {
     private final ExecutionCallback callback;
 
     private StringBuilder log;
-    private AtomicInteger current = new AtomicInteger(0);
-    private AtomicInteger total = new AtomicInteger(0);
+    private final AtomicInteger current = new AtomicInteger(0);
+    private final AtomicInteger total = new AtomicInteger(0);
 
 
     @Override
