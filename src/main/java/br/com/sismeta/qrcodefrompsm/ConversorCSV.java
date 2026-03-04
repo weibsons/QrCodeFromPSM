@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class ConversorCSV {
@@ -16,8 +15,12 @@ public class ConversorCSV {
     private final List<FileMap> maps = FileMap.startUp();
 
     public static void main(String[] args) {
+        var start = System.currentTimeMillis();
+
         var conversor = new ConversorCSV();
         conversor.convert();
+
+        System.out.println("A execução durou " + (System.currentTimeMillis() - start) + " ms" );
     }
 
     private FileMap getMap(String key) {
@@ -28,16 +31,21 @@ public class ConversorCSV {
     }
 
     public void convert() {
-        var inputFile = "C:\\temp\\iptu\\IPTU2026_PAULISTA.txt";
-        var outputFile = "C:\\temp\\iptu\\IPTU2026_PAULISTA.csv";
-
-
+        var inputFile = "C:\\temp\\iptu\\ARQUIVO_IMPRESSAO_IPTU2026_PAULISTA.txt";
+        var outputDir = "C:\\temp\\iptu\\";
         var df = new DecimalFormat("#,###.00");
         var printable = new HashMap<Integer, FileMap>();
-        var items = new ArrayList<String>();
+        var headerLine = "";
+        var fileCount = 1;
+        var recordCount = 0;
+        var maxRecords = 5000;
+
+        BufferedWriter bw = null;
+
         try (var br = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), StandardCharsets.UTF_8))) {
             var isHeader = true;
             String linha;
+
             while ((linha = br.readLine()) != null) {
                 var printRow = new ArrayList<String>();
                 var campos = linha.split(";");
@@ -52,39 +60,60 @@ public class ConversorCSV {
                         }
                     }
 
-                    // ele já começa da primeira linha para por o header no arquivo (para o header todos serão verdadeiros)
                     if (printable.containsKey(i)) {
                         var fm = printable.get(i);
                         if (!isHeader) {
                             if (fm.isMoney()) {
-                                data = df.format(Integer.parseInt(data) / 100.0);
+                                data = df.format(Long.parseLong(data) / 100.0);
                             }
                         }
                         printRow.add(data);
                     }
                 }
-                isHeader = false;
-                items.add(String.join(";", printRow));
+
+                String rowStr = String.join(";", printRow);
+
+                if (isHeader) {
+                    headerLine = rowStr; // salvar cabeçalho
+                    isHeader = false;
+
+                    // abrir o primeiro arquivo já com cabeçalho
+                    var outputFile = outputDir + "parte_" + fileCount + ".csv";
+                    bw = new BufferedWriter(new FileWriter(outputFile));
+                    bw.write(headerLine);
+                    bw.newLine();
+                    fileCount++;
+                    recordCount = 0;
+                    continue; // não escrever o cabeçalho de novo como "linha normal"
+                }
+
+                // abrir novo arquivo se necessário
+                if (recordCount >= maxRecords) {
+                    bw.close();
+                    var outputFile = outputDir + "parte_" + fileCount + ".csv";
+                    bw = new BufferedWriter(new FileWriter(outputFile));
+                    bw.write(headerLine); // cabeçalho só nas partes seguintes
+                    bw.newLine();
+                    fileCount++;
+                    recordCount = 0;
+                }
+
+                bw.write(rowStr);
+                bw.newLine();
+                recordCount++;
             }
+
+            if (bw != null) {
+                bw.close();
+            }
+
+            System.out.println("Arquivos CSV gerados com sucesso em: " + outputDir);
+
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Erro ao ler o arquivo!");
-        }
-
-
-
-        // Escrita no novo arquivo .csv
-        try (var bw = new BufferedWriter(new FileWriter(outputFile))) {
-            for (var l : items) {
-                bw.write(l);
-                bw.newLine();
-            }
-            System.out.println("Arquivo CSV gerado com sucesso em: " + outputFile);
-        } catch (IOException e) {
-            System.err.println("Erro ao escrever o arquivo: " + e.getMessage());
+            System.out.println("Erro ao processar o arquivo!");
         }
     }
-
 
 
 }

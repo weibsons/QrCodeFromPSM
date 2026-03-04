@@ -74,8 +74,9 @@ public class FileMap {
             entities.add(new FileMap("PIX_COPIA_E_COLA"+i, true, false));
         }
 
-        entities.add(new FileMap("CPF CNPJ", true, false));
+        entities.add(new FileMap("CNPJCPF", true, false));
         entities.add(new FileMap("AREAUNI", true, false));
+        entities.add(new FileMap("AREACOBER", true, false));
 
         return entities;
 
